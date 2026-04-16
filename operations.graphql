@@ -1,0 +1,320 @@
+# ── Services ──────────────────────────────────────────────────────────────────
+
+query getService($id: ID!) {
+  serviceGet(id: $id) {
+    id projectId name subdomain source repo image branch status errorMessage
+    envVars { key value }
+    ports { name port protocol visibility internalEndpoint publicEndpoint }
+    gitProvider commitHash memory vcpus
+    customDomain customDomainStatus
+    buildPack buildCommand startCommand publishDirectory rootDirectory dockerfilePath
+    teardownEnabled teardownOverlapSeconds teardownDrainingSeconds
+    destroyTimeoutSeconds createdAt updatedAt
+  }
+}
+
+query listServices($ws: String, $proj: String) {
+  serviceList(workspaceSlug: $ws, projectSlug: $proj) {
+    nodes {
+      id projectId name subdomain source repo image branch status errorMessage
+      envVars { key value }
+      ports { name port protocol visibility internalEndpoint publicEndpoint }
+      gitProvider commitHash memory vcpus
+      customDomain customDomainStatus
+      buildPack buildCommand startCommand publishDirectory rootDirectory dockerfilePath
+      teardownEnabled teardownOverlapSeconds teardownDrainingSeconds
+      destroyTimeoutSeconds createdAt updatedAt
+    }
+  }
+}
+
+mutation createService($input: CreateServiceInput!) {
+  serviceCreate(input: $input) {
+    serviceId name status repo
+    ports { name port protocol visibility internalEndpoint publicEndpoint }
+  }
+}
+
+mutation updateService($input: UpdateServiceInput!) {
+  serviceUpdate(input: $input) { serviceId name status }
+}
+
+mutation deleteService(
+  $name: String
+  $serviceId: ID
+  $project: String
+  $projectId: ID
+  $ws: String
+) {
+  serviceDelete(
+    name: $name
+    serviceId: $serviceId
+    project: $project
+    projectId: $projectId
+    workspaceSlug: $ws
+  ) {
+    serviceId name message
+  }
+}
+
+# ── Secrets ───────────────────────────────────────────────────────────────────
+
+mutation setSecrets($input: SetSecretsInput!) {
+  serviceSetSecrets(input: $input) { serviceId name status }
+}
+
+mutation deleteSecrets($input: DeleteSecretsInput!) {
+  serviceDeleteSecrets(input: $input) { serviceId name status }
+}
+
+# ── Exec ──────────────────────────────────────────────────────────────────────
+
+query getServiceExecUrl($serviceId: ID!) {
+  serviceExecUrl(serviceId: $serviceId) { url token serviceId }
+}
+
+query execService(
+  $serviceId: ID
+  $name: String
+  $command: String!
+  $project: String
+  $ws: String
+) {
+  serviceExec(
+    serviceId: $serviceId
+    name: $name
+    command: $command
+    project: $project
+    workspaceSlug: $ws
+  ) {
+    exitCode stdout stderr
+  }
+}
+
+# ── Workspaces ────────────────────────────────────────────────────────────────
+
+query listWorkspaces {
+  workspaceList { id name slug isDefault role createdAt }
+}
+
+mutation createWorkspace($name: String!, $slug: String!, $description: String) {
+  workspaceCreate(name: $name, slug: $slug, description: $description) {
+    id name slug isDefault role createdAt
+  }
+}
+
+mutation deleteWorkspace($id: ID!) {
+  workspaceDelete(id: $id)
+}
+
+query listWorkspaceMembers($slug: String!) {
+  workspaceListMembers(workspaceSlug: $slug) {
+    id userId email username displayName avatarUrl role joinedAt
+  }
+}
+
+mutation inviteToWorkspace($id: ID!, $user: String!, $role: String) {
+  workspaceInvite(workspaceId: $id, user: $user, role: $role) {
+    id workspaceId workspaceName workspaceSlug
+    inviterDisplayName inviteeDisplayName role status createdAt
+  }
+}
+
+mutation removeWorkspaceMember($wsId: ID!, $userId: ID!) {
+  workspaceRemoveMember(workspaceId: $wsId, userId: $userId)
+}
+
+query listMyInvites {
+  workspaceListMyInvites {
+    id workspaceId workspaceName workspaceSlug
+    inviterDisplayName inviteeDisplayName role status createdAt
+  }
+}
+
+query listWorkspaceInvites($slug: String!) {
+  workspaceListInvites(workspaceSlug: $slug) {
+    id workspaceId workspaceName workspaceSlug
+    inviterDisplayName inviteeDisplayName role status createdAt
+  }
+}
+
+mutation acceptInvite($id: ID!) {
+  workspaceAcceptInvite(inviteId: $id)
+}
+
+mutation declineInvite($id: ID!) {
+  workspaceDeclineInvite(inviteId: $id)
+}
+
+mutation revokeInvite($id: ID!) {
+  workspaceRevokeInvite(inviteId: $id)
+}
+
+# ── Projects ──────────────────────────────────────────────────────────────────
+
+query listProjects($ws: String) {
+  projectList(workspaceSlug: $ws) {
+    nodes { id name slug createdAt updatedAt }
+  }
+}
+
+mutation createProject($input: CreateProjectInput!) {
+  projectCreate(input: $input) { id name slug createdAt updatedAt }
+}
+
+mutation deleteProject($slug: String!, $ws: String) {
+  projectDelete(slug: $slug, workspaceSlug: $ws)
+}
+
+# ── DNS ───────────────────────────────────────────────────────────────────────
+
+query listDNSZones($ws: String) {
+  dnsListZones(workspaceSlug: $ws) { id zone status error createdAt }
+}
+
+query listDNSRecords($zone: String!, $ws: String) {
+  dnsListRecords(zone: $zone, workspaceSlug: $ws) {
+    id name type content ttl managed createdAt
+  }
+}
+
+mutation addDNSRecord(
+  $zone: String!
+  $name: String!
+  $recordType: String!
+  $content: String!
+  $ttl: Int
+  $ws: String
+) {
+  dnsAddRecord(
+    zone: $zone
+    name: $name
+    type: $recordType
+    content: $content
+    ttl: $ttl
+    workspaceSlug: $ws
+  ) {
+    id name type content ttl managed createdAt
+  }
+}
+
+mutation deleteDNSRecord($zone: String!, $recordId: ID!, $ws: String) {
+  dnsDeleteRecord(zone: $zone, recordId: $recordId, workspaceSlug: $ws)
+}
+
+# ── Domains ───────────────────────────────────────────────────────────────────
+
+mutation addDomain($name: String!, $domain: String!, $project: String, $ws: String) {
+  domainAdd(name: $name, domain: $domain, project: $project, workspaceSlug: $ws) {
+    serviceId domain status message
+  }
+}
+
+mutation removeDomain($name: String!, $project: String, $ws: String) {
+  domainRemove(name: $name, project: $project, workspaceSlug: $ws) {
+    serviceId message
+  }
+}
+
+# ── Templates ─────────────────────────────────────────────────────────────────
+
+query listTemplates($search: String) {
+  templateList(search: $search) {
+    slug name description tags icon
+    variables { key type name description required sensitive defaultValue options }
+    services { key name source image memory vcpus }
+    outputs { key label description kind sensitive }
+  }
+}
+
+mutation deployTemplate($input: TemplateDeployInput!) {
+  templateDeploy(input: $input) {
+    templateInstanceId projectId
+    services {
+      serviceId key name status
+      endpoints { name port protocol visibility internalEndpoint publicEndpoint }
+    }
+    outputs { key label description kind sensitive value }
+  }
+}
+
+query listTemplateInstances($project: String, $projectId: ID, $ws: String) {
+  templateInstanceList(project: $project, projectId: $projectId, workspaceSlug: $ws) {
+    id templateSlug projectId name status
+    services {
+      serviceId key name status
+      endpoints { name port protocol visibility internalEndpoint publicEndpoint }
+    }
+    outputs { key label description kind sensitive value }
+    createdAt
+  }
+}
+
+# ── Account ───────────────────────────────────────────────────────────────────
+
+query getAccountStatus {
+  accountStatus {
+    id email displayName username githubUsername
+    hasGitHubOAuth hasGitHubApp defaultWorkspace subscriptionTier
+  }
+}
+
+# ── Billing ───────────────────────────────────────────────────────────────────
+
+query getUsageBillBreakdown($ws: String) {
+  usageBillBreakdown(workspaceSlug: $ws) {
+    memory { quantity unitPrice unit totalCents }
+    cpu    { quantity unitPrice unit totalCents }
+    egress { quantity unitPrice unit totalCents }
+    subtotal includedUsageCents planFeeCents currentBillCents
+    periodStart periodEnd
+  }
+}
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+
+query getServiceLogs($input: LogsInput!) {
+  serviceLogs(input: $input) {
+    entries { timestamp level message attributes }
+    hasMore
+  }
+}
+
+# ── Metrics ───────────────────────────────────────────────────────────────────
+
+query getServiceMetrics($serviceId: ID!, $timeRange: MetricTimeRange!, $maxDataPoints: Int) {
+  serviceMetrics(serviceId: $serviceId, timeRange: $timeRange, maxDataPoints: $maxDataPoints) {
+    cpuUsage                   { metric dataPoints { timestamp value } }
+    memoryUsageMB              { metric dataPoints { timestamp value } }
+    networkReceiveBytesPerSec  { metric dataPoints { timestamp value } }
+    networkTransmitBytesPerSec { metric dataPoints { timestamp value } }
+    memoryLimitMB cpuLimitVCPUs
+    diskUsageMB { metric dataPoints { timestamp value } }
+    volumeSizeGi
+  }
+}
+
+# ── Repos ─────────────────────────────────────────────────────────────────────
+
+mutation createRepo($input: RepoCreateInput!) {
+  repoCreate(input: $input) { name gitRemote expiresAt message }
+}
+
+mutation getRepoToken($input: RepoGetTokenInput!) {
+  repoGetToken(input: $input) { gitRemote expiresAt }
+}
+
+# ── Chat ──────────────────────────────────────────────────────────────────────
+
+mutation sendChatMessage($ws: String!, $channel: String, $content: String!) {
+  chatSend(workspaceSlug: $ws, channel: $channel, content: $content) {
+    seq messageId
+  }
+}
+
+query readChat($ws: String!, $channel: String, $cursor: Int, $limit: Int) {
+  chatRead(workspaceSlug: $ws, channel: $channel, cursor: $cursor, limit: $limit) {
+    messages { seq messageId senderId senderName channel content metadata createdAt }
+    nextCursor hasMore
+  }
+}

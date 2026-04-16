@@ -1,0 +1,112 @@
+schema: schema.graphql
+operations:
+  - operations.graphql
+generated: generated.go
+package: ink
+optional: pointer
+bindings:
+  # Scalars
+  Time:
+    type: string
+  Decimal:
+    type: string
+  Int64:
+    type: int64
+  # Output types
+  Service:
+    type: github.com/mldotink/sdk-go.Service
+  EnvVar:
+    type: github.com/mldotink/sdk-go.EnvVar
+  ServicePort:
+    type: github.com/mldotink/sdk-go.ServicePort
+  ExecSession:
+    type: github.com/mldotink/sdk-go.ExecSession
+  ExecResult:
+    type: github.com/mldotink/sdk-go.ExecResult
+  CreateServiceResult:
+    type: github.com/mldotink/sdk-go.CreateServiceResult
+  UpdateServiceResult:
+    type: github.com/mldotink/sdk-go.UpdateServiceResult
+  DeleteServiceResult:
+    type: github.com/mldotink/sdk-go.DeleteServiceResult
+  SetSecretsResult:
+    type: github.com/mldotink/sdk-go.SetSecretsResult
+  Workspace:
+    type: github.com/mldotink/sdk-go.Workspace
+  WorkspaceMember:
+    type: github.com/mldotink/sdk-go.WorkspaceMember
+  WorkspaceInvite:
+    type: github.com/mldotink/sdk-go.WorkspaceInvite
+  Project:
+    type: github.com/mldotink/sdk-go.Project
+  HostedZone:
+    type: github.com/mldotink/sdk-go.DNSZone
+  ZoneRecord:
+    type: github.com/mldotink/sdk-go.ZoneRecord
+  DomainAddResult:
+    type: github.com/mldotink/sdk-go.AddDomainResult
+  DomainRemoveResult:
+    type: github.com/mldotink/sdk-go.RemoveDomainResult
+  ServiceTemplate:
+    type: github.com/mldotink/sdk-go.Template
+  TemplateVariableDef:
+    type: github.com/mldotink/sdk-go.TemplateVariable
+  TemplateServiceDef:
+    type: github.com/mldotink/sdk-go.TemplateService
+  TemplateOutputDef:
+    type: github.com/mldotink/sdk-go.TemplateOutput
+  TemplateDeployResult:
+    type: github.com/mldotink/sdk-go.TemplateDeployResult
+  TemplateDeployedService:
+    type: github.com/mldotink/sdk-go.TemplateDeployedService
+  TemplateServiceEndpoint:
+    type: github.com/mldotink/sdk-go.TemplateServiceEndpoint
+  TemplateDeployedOutput:
+    type: github.com/mldotink/sdk-go.TemplateDeployedOutput
+  TemplateInstance:
+    type: github.com/mldotink/sdk-go.TemplateInstance
+  User:
+    type: github.com/mldotink/sdk-go.AccountStatus
+  UsageBillBreakdown:
+    type: github.com/mldotink/sdk-go.UsageBillBreakdown
+  UsageLineItem:
+    type: github.com/mldotink/sdk-go.UsageLineItem
+  LogEntry:
+    type: github.com/mldotink/sdk-go.LogEntry
+  LogsResult:
+    type: github.com/mldotink/sdk-go.LogsResult
+  ServiceMetrics:
+    type: github.com/mldotink/sdk-go.ServiceMetrics
+  MetricSeries:
+    type: github.com/mldotink/sdk-go.MetricSeries
+  MetricDataPoint:
+    type: github.com/mldotink/sdk-go.MetricDataPoint
+  ChatReadResult:
+    type: github.com/mldotink/sdk-go.ReadChatResult
+  ChatSendResult:
+    type: github.com/mldotink/sdk-go.SendChatResult
+  ChatMessage:
+    type: github.com/mldotink/sdk-go.ChatMessage
+  RepoCreateResult:
+    type: github.com/mldotink/sdk-go.CreateRepoResult
+  RepoGetTokenResult:
+    type: github.com/mldotink/sdk-go.GetRepoTokenResult
+  # Input types
+  CreateServiceInput:
+    type: github.com/mldotink/sdk-go.CreateServiceInput
+  UpdateServiceInput:
+    type: github.com/mldotink/sdk-go.UpdateServiceInput
+  SetSecretsInput:
+    type: github.com/mldotink/sdk-go.SetSecretsInput
+  DeleteSecretsInput:
+    type: github.com/mldotink/sdk-go.DeleteSecretsInput
+  LogsInput:
+    type: github.com/mldotink/sdk-go.LogsInput
+  RepoCreateInput:
+    type: github.com/mldotink/sdk-go.CreateRepoInput
+  RepoGetTokenInput:
+    type: github.com/mldotink/sdk-go.GetRepoTokenInput
+  CreateProjectInput:
+    type: github.com/mldotink/sdk-go.CreateProjectInput
+  TemplateDeployInput:
+    type: github.com/mldotink/sdk-go.TemplateDeployInput

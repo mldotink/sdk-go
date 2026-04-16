@@ -1,0 +1,7 @@
+# Generated from backend source — sync with: make sync-schema
+schema.graphql
+
+# Go build artifacts
+*.out
+coverage.txt
+dist/
