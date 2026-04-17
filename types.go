@@ -428,15 +428,16 @@ type TemplateInstance struct {
 // AccountStatus is the current authenticated user's account details.
 // Corresponds to the GraphQL User type.
 type AccountStatus struct {
-	ID               string `json:"id"`
-	Email            string `json:"email"`
-	DisplayName      string `json:"displayName"`
-	Username         string `json:"username"`
-	GitHubUsername   string `json:"githubUsername"`
-	HasGitHubOAuth   bool   `json:"hasGitHubOAuth"`
-	HasGitHubApp     bool   `json:"hasGitHubApp"`
-	DefaultWorkspace string `json:"defaultWorkspace"`
-	SubscriptionTier string `json:"subscriptionTier"`
+	ID               string   `json:"id"`
+	Email            string   `json:"email"`
+	DisplayName      string   `json:"displayName"`
+	Username         string   `json:"username"`
+	GitHubUsername   string   `json:"githubUsername"`
+	HasGitHubOAuth   bool     `json:"hasGitHubOAuth"`
+	HasGitHubApp     bool     `json:"hasGitHubApp"`
+	DefaultWorkspace string   `json:"defaultWorkspace"`
+	SubscriptionTier string   `json:"subscriptionTier"`
+	GitHubScopes     []string `json:"githubScopes"`
 }
 
 // ── Billing ──────────────────────────────────────────────────────────────────

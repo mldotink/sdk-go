@@ -1479,6 +1479,7 @@ query getAccountStatus {
 		hasGitHubApp
 		defaultWorkspace
 		subscriptionTier
+		githubScopes
 	}
 }
 `

@@ -255,7 +255,7 @@ query listTemplateInstances($project: String, $projectId: ID, $ws: String) {
 query getAccountStatus {
   accountStatus {
     id email displayName username githubUsername
-    hasGitHubOAuth hasGitHubApp defaultWorkspace subscriptionTier
+    hasGitHubOAuth hasGitHubApp defaultWorkspace subscriptionTier githubScopes
   }
 }
 
