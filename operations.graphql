@@ -13,6 +13,19 @@ query getService($id: ID!) {
   }
 }
 
+query getServiceByName($name: String!, $ws: String, $project: String) {
+  serviceGetByName(name: $name, workspaceSlug: $ws, project: $project) {
+    id projectId name subdomain source repo image branch status errorMessage
+    envVars { key value }
+    ports { name port protocol visibility internalEndpoint publicEndpoint }
+    gitProvider commitHash memory vcpus
+    customDomain customDomainStatus
+    buildPack buildCommand startCommand publishDirectory rootDirectory dockerfilePath
+    teardownEnabled teardownOverlapSeconds teardownDrainingSeconds
+    destroyTimeoutSeconds createdAt updatedAt
+  }
+}
+
 query listServices($ws: String, $proj: String) {
   serviceList(workspaceSlug: $ws, projectSlug: $proj) {
     nodes {

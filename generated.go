@@ -240,6 +240,22 @@ type __getRepoTokenInput struct {
 // GetInput returns __getRepoTokenInput.Input, and is useful for accessing the field via an interface.
 func (v *__getRepoTokenInput) GetInput() GetRepoTokenInput { return v.Input }
 
+// __getServiceByNameInput is used internally by genqlient
+type __getServiceByNameInput struct {
+	Name    string  `json:"name"`
+	Ws      *string `json:"ws"`
+	Project *string `json:"project"`
+}
+
+// GetName returns __getServiceByNameInput.Name, and is useful for accessing the field via an interface.
+func (v *__getServiceByNameInput) GetName() string { return v.Name }
+
+// GetWs returns __getServiceByNameInput.Ws, and is useful for accessing the field via an interface.
+func (v *__getServiceByNameInput) GetWs() *string { return v.Ws }
+
+// GetProject returns __getServiceByNameInput.Project, and is useful for accessing the field via an interface.
+func (v *__getServiceByNameInput) GetProject() *string { return v.Project }
+
 // __getServiceExecUrlInput is used internally by genqlient
 type __getServiceExecUrlInput struct {
 	ServiceId string `json:"serviceId"`
@@ -519,7 +535,7 @@ func (v *createRepoResponse) GetRepoCreate() CreateRepoResult { return v.RepoCre
 
 // createServiceResponse is returned by createService on success.
 type createServiceResponse struct {
-	// Create a service and trigger its first deployment. The subdomain becomes {subdomain}.ml.ink. Returns immediately while build runs async — poll serviceGet to track status.
+	// Create a service and trigger its first deployment. The managed app domain comes from the target cluster config. Returns immediately while build runs async — poll serviceGet to track status.
 	ServiceCreate CreateServiceResult `json:"serviceCreate"`
 }
 
@@ -626,6 +642,15 @@ type getRepoTokenResponse struct {
 
 // GetRepoGetToken returns getRepoTokenResponse.RepoGetToken, and is useful for accessing the field via an interface.
 func (v *getRepoTokenResponse) GetRepoGetToken() GetRepoTokenResult { return v.RepoGetToken }
+
+// getServiceByNameResponse is returned by getServiceByName on success.
+type getServiceByNameResponse struct {
+	// Full details for a single service by name in a workspace/project.
+	ServiceGetByName *Service `json:"serviceGetByName"`
+}
+
+// GetServiceGetByName returns getServiceByNameResponse.ServiceGetByName, and is useful for accessing the field via an interface.
+func (v *getServiceByNameResponse) GetServiceGetByName() *Service { return v.ServiceGetByName }
 
 // getServiceExecUrlResponse is returned by getServiceExecUrl on success.
 type getServiceExecUrlResponse struct {
@@ -1602,6 +1627,83 @@ func getService(
 	}
 
 	data_ = &getServiceResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by getServiceByName.
+const getServiceByName_Operation = `
+query getServiceByName ($name: String!, $ws: String, $project: String) {
+	serviceGetByName(name: $name, workspaceSlug: $ws, project: $project) {
+		id
+		projectId
+		name
+		subdomain
+		source
+		repo
+		image
+		branch
+		status
+		errorMessage
+		envVars {
+			key
+			value
+		}
+		ports {
+			name
+			port
+			protocol
+			visibility
+			internalEndpoint
+			publicEndpoint
+		}
+		gitProvider
+		commitHash
+		memory
+		vcpus
+		customDomain
+		customDomainStatus
+		buildPack
+		buildCommand
+		startCommand
+		publishDirectory
+		rootDirectory
+		dockerfilePath
+		teardownEnabled
+		teardownOverlapSeconds
+		teardownDrainingSeconds
+		destroyTimeoutSeconds
+		createdAt
+		updatedAt
+	}
+}
+`
+
+func getServiceByName(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	name string,
+	ws *string,
+	project *string,
+) (data_ *getServiceByNameResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "getServiceByName",
+		Query:  getServiceByName_Operation,
+		Variables: &__getServiceByNameInput{
+			Name:    name,
+			Ws:      ws,
+			Project: project,
+		},
+	}
+
+	data_ = &getServiceByNameResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

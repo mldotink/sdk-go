@@ -27,6 +27,18 @@ func (c *Client) GetService(ctx context.Context, id string) (*Service, error) {
 	return resp.ServiceGet, nil
 }
 
+// GetServiceByName returns full details for a single service by name.
+func (c *Client) GetServiceByName(ctx context.Context, name, workspaceSlug, projectSlug string) (*Service, error) {
+	resp, err := getServiceByName(ctx, c.gql, name, optStr(workspaceSlug), optStr(projectSlug))
+	if err != nil {
+		return nil, err
+	}
+	if resp.ServiceGetByName == nil {
+		return nil, fmt.Errorf("ink: service %q not found", name)
+	}
+	return resp.ServiceGetByName, nil
+}
+
 // ListServices returns all services in a workspace, optionally filtered by project slug.
 func (c *Client) ListServices(ctx context.Context, workspaceSlug, projectSlug string) ([]Service, error) {
 	resp, err := listServices(ctx, c.gql, optStr(workspaceSlug), optStr(projectSlug))
