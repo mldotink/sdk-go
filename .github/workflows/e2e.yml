@@ -1,13 +1,9 @@
 name: E2E
-run-name: E2E ${{ inputs.test_regex }} ${{ inputs.correlation_id }}
+run-name: E2E ${{ inputs.test_regex }}
 
 on:
   workflow_dispatch:
     inputs:
-      correlation_id:
-        description: Optional caller run id used to find this workflow run.
-        required: false
-        default: ""
       test_regex:
         description: Go test -run regex.
         required: true
@@ -24,6 +20,41 @@ on:
         description: Go test timeout.
         required: true
         default: 12m
+      sdk_ref:
+        description: SDK ref to test. Empty uses the selected branch.
+        required: false
+        default: ""
+  workflow_call:
+    inputs:
+      test_regex:
+        type: string
+        required: false
+        default: .
+      workspace:
+        type: string
+        required: false
+        default: ""
+      project:
+        type: string
+        required: false
+        default: ""
+      timeout:
+        type: string
+        required: false
+        default: 12m
+      sdk_ref:
+        type: string
+        required: false
+        default: main
+    secrets:
+      INK_API_KEY:
+        required: true
+      INK_API_URL:
+        required: false
+      INK_WORKSPACE:
+        required: false
+      INK_PROJECT:
+        required: false
 
 permissions:
   contents: read
@@ -42,8 +73,22 @@ jobs:
       E2E_TIMEOUT: ${{ inputs.timeout }}
 
     steps:
+      - name: Resolve SDK ref
+        id: sdk-ref
+        run: |
+          if [ -n "${{ inputs.sdk_ref }}" ]; then
+            echo "ref=${{ inputs.sdk_ref }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.repository }}" = "mldotink/sdk-go" ]; then
+            echo "ref=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=main" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          repository: mldotink/sdk-go
+          ref: ${{ steps.sdk-ref.outputs.ref }}
 
       - name: Setup Go
         uses: actions/setup-go@v5
