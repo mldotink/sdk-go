@@ -2,7 +2,7 @@ module github.com/mldotink/sdk-go
 
 go 1.23.0
 
-require nhooyr.io/websocket v1.8.17
+require github.com/coder/websocket v1.8.14
 
 require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect

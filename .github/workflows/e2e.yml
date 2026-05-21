@@ -1,0 +1,69 @@
+name: E2E
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_regex:
+        description: Go test -run regex.
+        required: true
+        default: .
+      workspace:
+        description: Ink workspace. Empty uses INK_WORKSPACE secret or e2e.
+        required: false
+        default: ""
+      project:
+        description: Ink project. Empty uses INK_PROJECT secret or default.
+        required: false
+        default: ""
+      timeout:
+        description: Go test timeout.
+        required: true
+        default: 12m
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    name: Run E2E
+    runs-on: [self-hosted, ink]
+    timeout-minutes: 30
+    env:
+      INK_API_KEY: ${{ secrets.INK_API_KEY }}
+      INK_API_URL: ${{ secrets.INK_API_URL }}
+      INK_WORKSPACE: ${{ inputs.workspace != '' && inputs.workspace || secrets.INK_WORKSPACE || 'e2e' }}
+      INK_PROJECT: ${{ inputs.project != '' && inputs.project || secrets.INK_PROJECT || 'default' }}
+      E2E_RUN: ${{ inputs.test_regex }}
+      E2E_TIMEOUT: ${{ inputs.timeout }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Install psql
+        run: |
+          if command -v psql >/dev/null 2>&1; then
+            psql --version
+            exit 0
+          fi
+          if ! command -v apt-get >/dev/null 2>&1; then
+            echo "psql is required but apt-get is not available"
+            exit 1
+          fi
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Check configuration
+        run: |
+          test -n "$INK_API_KEY"
+          test -n "$INK_WORKSPACE"
+          test -n "$INK_PROJECT"
+
+      - name: Run e2e
+        run: make e2e

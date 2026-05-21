@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"nhooyr.io/websocket"
+	"github.com/coder/websocket"
 )
 
 const (

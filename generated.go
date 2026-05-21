@@ -192,6 +192,22 @@ func (v *__deleteServiceInput) GetProjectId() *string { return v.ProjectId }
 // GetWs returns __deleteServiceInput.Ws, and is useful for accessing the field via an interface.
 func (v *__deleteServiceInput) GetWs() *string { return v.Ws }
 
+// __deleteVolumeInput is used internally by genqlient
+type __deleteVolumeInput struct {
+	Name    string  `json:"name"`
+	Project *string `json:"project"`
+	Ws      *string `json:"ws"`
+}
+
+// GetName returns __deleteVolumeInput.Name, and is useful for accessing the field via an interface.
+func (v *__deleteVolumeInput) GetName() string { return v.Name }
+
+// GetProject returns __deleteVolumeInput.Project, and is useful for accessing the field via an interface.
+func (v *__deleteVolumeInput) GetProject() *string { return v.Project }
+
+// GetWs returns __deleteVolumeInput.Ws, and is useful for accessing the field via an interface.
+func (v *__deleteVolumeInput) GetWs() *string { return v.Ws }
+
 // __deleteWorkspaceInput is used internally by genqlient
 type __deleteWorkspaceInput struct {
 	Id string `json:"id"`
@@ -383,6 +399,18 @@ type __listTemplatesInput struct {
 
 // GetSearch returns __listTemplatesInput.Search, and is useful for accessing the field via an interface.
 func (v *__listTemplatesInput) GetSearch() *string { return v.Search }
+
+// __listVolumesInput is used internally by genqlient
+type __listVolumesInput struct {
+	Ws      *string `json:"ws"`
+	Project *string `json:"project"`
+}
+
+// GetWs returns __listVolumesInput.Ws, and is useful for accessing the field via an interface.
+func (v *__listVolumesInput) GetWs() *string { return v.Ws }
+
+// GetProject returns __listVolumesInput.Project, and is useful for accessing the field via an interface.
+func (v *__listVolumesInput) GetProject() *string { return v.Project }
 
 // __listWorkspaceInvitesInput is used internally by genqlient
 type __listWorkspaceInvitesInput struct {
@@ -598,6 +626,15 @@ type deleteServiceResponse struct {
 // GetServiceDelete returns deleteServiceResponse.ServiceDelete, and is useful for accessing the field via an interface.
 func (v *deleteServiceResponse) GetServiceDelete() DeleteServiceResult { return v.ServiceDelete }
 
+// deleteVolumeResponse is returned by deleteVolume on success.
+type deleteVolumeResponse struct {
+	// Permanently delete a detached volume.
+	VolumeDelete bool `json:"volumeDelete"`
+}
+
+// GetVolumeDelete returns deleteVolumeResponse.VolumeDelete, and is useful for accessing the field via an interface.
+func (v *deleteVolumeResponse) GetVolumeDelete() bool { return v.VolumeDelete }
+
 // deleteWorkspaceResponse is returned by deleteWorkspace on success.
 type deleteWorkspaceResponse struct {
 	// Delete a workspace. Must have no active services. Cannot delete your personal workspace.
@@ -791,6 +828,15 @@ type listTemplatesResponse struct {
 
 // GetTemplateList returns listTemplatesResponse.TemplateList, and is useful for accessing the field via an interface.
 func (v *listTemplatesResponse) GetTemplateList() []Template { return v.TemplateList }
+
+// listVolumesResponse is returned by listVolumes on success.
+type listVolumesResponse struct {
+	// List all volumes in a workspace, optionally filtered by project.
+	VolumeList []VolumeInfo `json:"volumeList"`
+}
+
+// GetVolumeList returns listVolumesResponse.VolumeList, and is useful for accessing the field via an interface.
+func (v *listVolumesResponse) GetVolumeList() []VolumeInfo { return v.VolumeList }
 
 // listWorkspaceInvitesResponse is returned by listWorkspaceInvites on success.
 type listWorkspaceInvitesResponse struct {
@@ -1347,6 +1393,42 @@ func deleteService(
 	}
 
 	data_ = &deleteServiceResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by deleteVolume.
+const deleteVolume_Operation = `
+mutation deleteVolume ($name: String!, $project: String, $ws: String) {
+	volumeDelete(name: $name, projectSlug: $project, workspaceSlug: $ws)
+}
+`
+
+func deleteVolume(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	name string,
+	project *string,
+	ws *string,
+) (data_ *deleteVolumeResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "deleteVolume",
+		Query:  deleteVolume_Operation,
+		Variables: &__deleteVolumeInput{
+			Name:    name,
+			Project: project,
+			Ws:      ws,
+		},
+	}
+
+	data_ = &deleteVolumeResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -2321,6 +2403,46 @@ func listTemplates(
 	}
 
 	data_ = &listTemplatesResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by listVolumes.
+const listVolumes_Operation = `
+query listVolumes ($ws: String, $project: String) {
+	volumeList(workspaceSlug: $ws, projectSlug: $project) {
+		name
+		mountPath
+		sizeGi
+		status
+		deleteAfter
+	}
+}
+`
+
+func listVolumes(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	ws *string,
+	project *string,
+) (data_ *listVolumesResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "listVolumes",
+		Query:  listVolumes_Operation,
+		Variables: &__listVolumesInput{
+			Ws:      ws,
+			Project: project,
+		},
+	}
+
+	data_ = &listVolumesResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

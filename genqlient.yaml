@@ -81,6 +81,8 @@ bindings:
     type: github.com/mldotink/sdk-go.MetricSeries
   MetricDataPoint:
     type: github.com/mldotink/sdk-go.MetricDataPoint
+  VolumeInfo:
+    type: github.com/mldotink/sdk-go.VolumeInfo
   ChatReadResult:
     type: github.com/mldotink/sdk-go.ReadChatResult
   ChatSendResult:

@@ -70,6 +70,18 @@ mutation deleteService(
   }
 }
 
+# ── Volumes ───────────────────────────────────────────────────────────────────
+
+query listVolumes($ws: String, $project: String) {
+  volumeList(workspaceSlug: $ws, projectSlug: $project) {
+    name mountPath sizeGi status deleteAfter
+  }
+}
+
+mutation deleteVolume($name: String!, $project: String, $ws: String) {
+  volumeDelete(name: $name, projectSlug: $project, workspaceSlug: $ws)
+}
+
 # ── Secrets ───────────────────────────────────────────────────────────────────
 
 mutation setSecrets($input: SetSecretsInput!) {

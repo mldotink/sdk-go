@@ -1,4 +1,3 @@
-// Package exec provides interactive shell sessions to Ink services via WebSocket.
 package exec
 
 import (
@@ -8,11 +7,10 @@ import (
 	"net/url"
 	"sync"
 
+	"github.com/coder/websocket"
 	ink "github.com/mldotink/sdk-go"
-	"nhooyr.io/websocket"
 )
 
-// Session is an interactive shell session connected to a running service container.
 type Session struct {
 	conn    *websocket.Conn
 	ctx     context.Context
@@ -25,8 +23,6 @@ type Session struct {
 	mu      sync.Mutex
 }
 
-// Dial obtains an exec token via the Ink API and opens a WebSocket shell
-// session to the specified service.
 func Dial(ctx context.Context, client *ink.Client, serviceID string) (*Session, error) {
 	sess, err := client.ExecURL(ctx, serviceID)
 	if err != nil {
@@ -82,30 +78,18 @@ func (s *Session) readLoop() {
 		}
 	}
 }
-
-// Stdin returns a writer for sending input to the shell.
-func (s *Session) Stdin() io.Writer { return &stdinWriter{s: s} }
-
-// Stdout returns a reader for the shell's stdout stream.
+func (s *Session) Stdin() io.Writer  { return &stdinWriter{s: s} }
 func (s *Session) Stdout() io.Reader { return s.stdoutR }
-
-// Stderr returns a reader for the shell's stderr stream.
 func (s *Session) Stderr() io.Reader { return s.stderrR }
-
-// Resize sends a terminal resize event to the remote shell.
 func (s *Session) Resize(width, height uint16) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	return sendResize(s.ctx, s.conn, width, height)
 }
-
-// Wait blocks until the session ends. Returns nil on clean close.
 func (s *Session) Wait() error {
 	s.wg.Wait()
 	return nil
 }
-
-// Close terminates the shell session.
 func (s *Session) Close() error {
 	s.cancel()
 	return s.conn.Close(websocket.StatusNormalClosure, "")

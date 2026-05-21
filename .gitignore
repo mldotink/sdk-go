@@ -1,6 +1,11 @@
 # Generated from backend source — sync with: make sync-schema
 schema.graphql
 
+# Local e2e credentials
+.env
+.env.*
+!.env.example
+
 # Go build artifacts
 *.out
 coverage.txt
