@@ -38,6 +38,17 @@ make e2e-list
 10. Wait for service to be deleted.
 11. Check public service URL no longer works.
 
+## `TestServiceStaticPublishDirectory`
+
+1. Create private Ink git repo.
+2. Create static files under `dist/` in a temp git repo.
+3. Push app to Ink git repo.
+4. Create service with `buildPack=static` and `publishDirectory=dist`.
+5. Wait for service to become active.
+6. Get public service URL.
+7. Visit public service URL.
+8. Check response body matches expected static content.
+
 ## `TestServiceImage`
 
 1. Create service from public Docker image.
