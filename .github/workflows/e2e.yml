@@ -1,8 +1,13 @@
 name: E2E
+run-name: E2E ${{ inputs.test_regex }} ${{ inputs.correlation_id }}
 
 on:
   workflow_dispatch:
     inputs:
+      correlation_id:
+        description: Optional caller run id used to find this workflow run.
+        required: false
+        default: ""
       test_regex:
         description: Go test -run regex.
         required: true
