@@ -3,24 +3,21 @@
 package e2e
 
 import (
-	"bytes"
 	"context"
+	"database/sql"
 	"fmt"
 	"net"
-	"os"
-	"os/exec"
+	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
 
+	_ "github.com/lib/pq"
 	ink "github.com/mldotink/sdk-go"
 )
 
 func TestPostgresTemplateEndpoints(t *testing.T) {
-	if _, err := exec.LookPath("psql"); err != nil {
-		t.Fatalf("psql is required for this test: %v", err)
-	}
-
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 	defer cancel()
 
@@ -131,7 +128,7 @@ func TestPostgresTemplateEndpoints(t *testing.T) {
 	requireNoError(t, err, "connect to postgres internal endpoint from service network")
 	t.Logf("internal postgres endpoint connected: %s", endpoint.InternalEndpoint)
 
-	err = runLocalPSQL(ctx, endpoint.PublicEndpoint, username, password, database)
+	err = queryPostgresEndpoint(ctx, endpoint.PublicEndpoint, username, password, database)
 	requireNoError(t, err, "connect to postgres public endpoint from local network")
 	t.Logf("public postgres endpoint connected: %s", endpoint.PublicEndpoint)
 }
@@ -163,31 +160,41 @@ func execPSQLInService(ctx context.Context, serviceID string) error {
 	return nil
 }
 
-func runLocalPSQL(ctx context.Context, endpoint, username, password, database string) error {
+func queryPostgresEndpoint(ctx context.Context, endpoint, username, password, database string) error {
 	host, port, err := net.SplitHostPort(endpoint)
 	if err != nil {
 		return err
 	}
-	psqlCtx, cancel := context.WithTimeout(ctx, 45*time.Second)
-	defer cancel()
-	cmd := exec.CommandContext(psqlCtx, "psql", "-v", "ON_ERROR_STOP=1", "-Atc", "SELECT 1")
-	cmd.Env = append(os.Environ(),
-		"PGHOST="+host,
-		"PGPORT="+port,
-		"PGUSER="+username,
-		"PGPASSWORD="+password,
-		"PGDATABASE="+database,
-		"PGSSLMODE=disable",
-		"PGCONNECT_TIMEOUT=10",
-	)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	cmd.Stderr = &out
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("psql failed: %w: %s", err, strings.TrimSpace(out.String()))
+	if _, err := strconv.Atoi(port); err != nil {
+		return fmt.Errorf("invalid postgres port %q: %w", port, err)
 	}
-	if strings.TrimSpace(out.String()) != "1" {
-		return fmt.Errorf("unexpected psql output: %q", out.String())
+
+	u := url.URL{
+		Scheme: "postgres",
+		User:   url.UserPassword(username, password),
+		Host:   net.JoinHostPort(host, port),
+		Path:   database,
+	}
+	query := u.Query()
+	query.Set("sslmode", "disable")
+	query.Set("connect_timeout", "10")
+	u.RawQuery = query.Encode()
+
+	queryCtx, cancel := context.WithTimeout(ctx, 45*time.Second)
+	defer cancel()
+
+	db, err := sql.Open("postgres", u.String())
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	var one int
+	if err := db.QueryRowContext(queryCtx, "SELECT 1").Scan(&one); err != nil {
+		return err
+	}
+	if one != 1 {
+		return fmt.Errorf("unexpected postgres query result: %d", one)
 	}
 	return nil
 }

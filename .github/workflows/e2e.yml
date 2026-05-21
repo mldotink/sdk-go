@@ -96,19 +96,6 @@ jobs:
           go-version-file: go.mod
           cache: true
 
-      - name: Install psql
-        run: |
-          if command -v psql >/dev/null 2>&1; then
-            psql --version
-            exit 0
-          fi
-          if ! command -v apt-get >/dev/null 2>&1; then
-            echo "psql is required but apt-get is not available"
-            exit 1
-          fi
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client
-
       - name: Check configuration
         run: |
           test -n "$INK_API_KEY"
