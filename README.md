@@ -99,11 +99,13 @@ session.Wait()
 
 ```go
 result, err := client.DeployTemplate(ctx, ink.TemplateDeployInput{
-    Template:      "postgres",
-    WorkspaceSlug: "my-workspace",
-    Variables: []ink.TemplateVariableValue{
-        {Key: "POSTGRES_DB", Value: "mydb"},
-    },
+	Template:      "postgres",
+	Name:          "mydb",
+	WorkspaceSlug: "my-workspace",
+	Regions:       []string{"us-east-1"},
+	Variables: []ink.TemplateVariableValue{
+		{Key: "database_name", Value: "app"},
+	},
 })
 fmt.Println(result.TemplateInstanceID)
 ```

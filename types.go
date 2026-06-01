@@ -290,6 +290,7 @@ type TemplateDeployInput struct {
 	Name          string                  `json:"name"`
 	WorkspaceSlug string                  `json:"workspaceSlug,omitempty"`
 	Project       string                  `json:"project,omitempty"`
+	Regions       []string                `json:"regions,omitempty"`
 	Variables     []TemplateVariableValue `json:"variables,omitempty"`
 }
 type TemplateDeployResult struct {
