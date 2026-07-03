@@ -4,7 +4,7 @@ query getService($id: ID!) {
   serviceGet(id: $id) {
     id projectId name subdomain source repo image branch status errorMessage
     envVars { key value }
-    ports { name port protocol visibility internalEndpoint publicEndpoint }
+    ports { name port protocol visibility authPolicy internalEndpoint publicEndpoint }
     gitProvider commitHash memory vcpus
     customDomain customDomainStatus
     buildPack buildCommand startCommand publishDirectory rootDirectory dockerfilePath
@@ -17,7 +17,7 @@ query getServiceByName($name: String!, $ws: String, $project: String) {
   serviceGetByName(name: $name, workspaceSlug: $ws, project: $project) {
     id projectId name subdomain source repo image branch status errorMessage
     envVars { key value }
-    ports { name port protocol visibility internalEndpoint publicEndpoint }
+    ports { name port protocol visibility authPolicy internalEndpoint publicEndpoint }
     gitProvider commitHash memory vcpus
     customDomain customDomainStatus
     buildPack buildCommand startCommand publishDirectory rootDirectory dockerfilePath
@@ -31,7 +31,7 @@ query listServices($ws: String, $proj: String) {
     nodes {
       id projectId name subdomain source repo image branch status errorMessage
       envVars { key value }
-      ports { name port protocol visibility internalEndpoint publicEndpoint }
+      ports { name port protocol visibility authPolicy internalEndpoint publicEndpoint }
       gitProvider commitHash memory vcpus
       customDomain customDomainStatus
       buildPack buildCommand startCommand publishDirectory rootDirectory dockerfilePath
@@ -44,7 +44,7 @@ query listServices($ws: String, $proj: String) {
 mutation createService($input: CreateServiceInput!) {
   serviceCreate(input: $input) {
     serviceId name status repo
-    ports { name port protocol visibility internalEndpoint publicEndpoint }
+    ports { name port protocol visibility authPolicy internalEndpoint publicEndpoint }
   }
 }
 

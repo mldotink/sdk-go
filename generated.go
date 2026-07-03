@@ -1147,6 +1147,7 @@ mutation createService ($input: CreateServiceInput!) {
 			port
 			protocol
 			visibility
+			authPolicy
 			internalEndpoint
 			publicEndpoint
 		}
@@ -1670,6 +1671,7 @@ query getService ($id: ID!) {
 			port
 			protocol
 			visibility
+			authPolicy
 			internalEndpoint
 			publicEndpoint
 		}
@@ -1743,6 +1745,7 @@ query getServiceByName ($name: String!, $ws: String, $project: String) {
 			port
 			protocol
 			visibility
+			authPolicy
 			internalEndpoint
 			publicEndpoint
 		}
@@ -2233,6 +2236,7 @@ query listServices ($ws: String, $proj: String) {
 				port
 				protocol
 				visibility
+				authPolicy
 				internalEndpoint
 				publicEndpoint
 			}

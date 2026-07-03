@@ -41,6 +41,7 @@ type ServicePort struct {
 	Port             string `json:"port"`
 	Protocol         string `json:"protocol"`
 	Visibility       string `json:"visibility"`
+	AuthPolicy       string `json:"authPolicy"`
 	InternalEndpoint string `json:"internalEndpoint"`
 	PublicEndpoint   string `json:"publicEndpoint"`
 }
@@ -54,6 +55,9 @@ type ServicePortInput struct {
 	Port       int    `json:"port"`
 	Protocol   string `json:"protocol"`
 	Visibility string `json:"visibility"`
+	// AuthPolicy is the public HTTP auth policy: public, org_sso, or deployer_sso.
+	// Empty uses the installation default.
+	AuthPolicy string `json:"authPolicy,omitempty"`
 }
 type BucketMountInput struct {
 	Name         string `json:"name"`
@@ -63,60 +67,66 @@ type BucketMountInput struct {
 	SyncInterval int    `json:"syncInterval,omitempty"`
 }
 type CreateServiceInput struct {
-	Name                    string             `json:"name,omitempty"`
-	Subdomain               string             `json:"subdomain,omitempty"`
-	Source                  string             `json:"source,omitempty"`
-	Repo                    string             `json:"repo,omitempty"`
-	Image                   string             `json:"image,omitempty"`
-	Host                    string             `json:"host,omitempty"`
-	Branch                  string             `json:"branch,omitempty"`
-	Project                 string             `json:"project,omitempty"`
-	WorkspaceSlug           string             `json:"workspaceSlug,omitempty"`
-	BuildPack               string             `json:"buildPack,omitempty"`
-	Ports                   []ServicePortInput `json:"ports,omitempty"`
-	EnvVars                 []EnvVar           `json:"envVars,omitempty"`
-	Memory                  string             `json:"memory,omitempty"`
-	VCPUs                   string             `json:"vcpus,omitempty"`
-	BuildCommand            string             `json:"buildCommand,omitempty"`
-	StartCommand            string             `json:"startCommand,omitempty"`
-	PublishDirectory        string             `json:"publishDirectory,omitempty"`
-	RootDirectory           string             `json:"rootDirectory,omitempty"`
-	DockerfilePath          string             `json:"dockerfilePath,omitempty"`
-	Regions                 []string           `json:"regions,omitempty"`
-	Volumes                 []VolumeSpec       `json:"volumes,omitempty"`
-	Bucket                  *BucketMountInput  `json:"bucket,omitempty"`
-	DestroyTimeoutSeconds   int                `json:"destroyTimeoutSeconds,omitempty"`
-	TeardownEnabled         bool               `json:"teardownEnabled,omitempty"`
-	TeardownOverlapSeconds  *int               `json:"teardownOverlapSeconds,omitempty"`
-	TeardownDrainingSeconds *int               `json:"teardownDrainingSeconds,omitempty"`
+	Name          string             `json:"name,omitempty"`
+	Subdomain     string             `json:"subdomain,omitempty"`
+	Source        string             `json:"source,omitempty"`
+	Repo          string             `json:"repo,omitempty"`
+	Image         string             `json:"image,omitempty"`
+	Host          string             `json:"host,omitempty"`
+	Branch        string             `json:"branch,omitempty"`
+	Project       string             `json:"project,omitempty"`
+	WorkspaceSlug string             `json:"workspaceSlug,omitempty"`
+	BuildPack     string             `json:"buildPack,omitempty"`
+	Ports         []ServicePortInput `json:"ports,omitempty"`
+	// AuthPolicy sets the auth policy of the public HTTP endpoint (public,
+	// org_sso, or deployer_sso) without spelling out Ports.
+	AuthPolicy              string            `json:"authPolicy,omitempty"`
+	EnvVars                 []EnvVar          `json:"envVars,omitempty"`
+	Memory                  string            `json:"memory,omitempty"`
+	VCPUs                   string            `json:"vcpus,omitempty"`
+	BuildCommand            string            `json:"buildCommand,omitempty"`
+	StartCommand            string            `json:"startCommand,omitempty"`
+	PublishDirectory        string            `json:"publishDirectory,omitempty"`
+	RootDirectory           string            `json:"rootDirectory,omitempty"`
+	DockerfilePath          string            `json:"dockerfilePath,omitempty"`
+	Regions                 []string          `json:"regions,omitempty"`
+	Volumes                 []VolumeSpec      `json:"volumes,omitempty"`
+	Bucket                  *BucketMountInput `json:"bucket,omitempty"`
+	DestroyTimeoutSeconds   int               `json:"destroyTimeoutSeconds,omitempty"`
+	TeardownEnabled         bool              `json:"teardownEnabled,omitempty"`
+	TeardownOverlapSeconds  *int              `json:"teardownOverlapSeconds,omitempty"`
+	TeardownDrainingSeconds *int              `json:"teardownDrainingSeconds,omitempty"`
 }
 type UpdateServiceInput struct {
-	Name                    string             `json:"name,omitempty"`
-	ServiceID               string             `json:"serviceId,omitempty"`
-	Project                 string             `json:"project,omitempty"`
-	ProjectID               string             `json:"projectId,omitempty"`
-	WorkspaceSlug           string             `json:"workspaceSlug,omitempty"`
-	Source                  *string            `json:"source,omitempty"`
-	Image                   *string            `json:"image,omitempty"`
-	Repo                    *string            `json:"repo,omitempty"`
-	Host                    *string            `json:"host,omitempty"`
-	Branch                  *string            `json:"branch,omitempty"`
-	BuildPack               *string            `json:"buildPack,omitempty"`
-	Memory                  *string            `json:"memory,omitempty"`
-	VCPUs                   *string            `json:"vcpus,omitempty"`
-	Ports                   []ServicePortInput `json:"ports,omitempty"`
-	EnvVars                 []EnvVar           `json:"envVars,omitempty"`
-	BuildCommand            *string            `json:"buildCommand,omitempty"`
-	StartCommand            *string            `json:"startCommand,omitempty"`
-	PublishDirectory        *string            `json:"publishDirectory,omitempty"`
-	RootDirectory           *string            `json:"rootDirectory,omitempty"`
-	DockerfilePath          *string            `json:"dockerfilePath,omitempty"`
-	Volumes                 []VolumeSpec       `json:"volumes,omitempty"`
-	Bucket                  *BucketMountInput  `json:"bucket,omitempty"`
-	DestroyTimeoutSeconds   *int               `json:"destroyTimeoutSeconds,omitempty"`
-	TeardownEnabled         *bool              `json:"teardownEnabled,omitempty"`
-	TeardownOverlapSeconds  *int               `json:"teardownOverlapSeconds,omitempty"`
-	TeardownDrainingSeconds *int               `json:"teardownDrainingSeconds,omitempty"`
+	Name          string             `json:"name,omitempty"`
+	ServiceID     string             `json:"serviceId,omitempty"`
+	Project       string             `json:"project,omitempty"`
+	ProjectID     string             `json:"projectId,omitempty"`
+	WorkspaceSlug string             `json:"workspaceSlug,omitempty"`
+	Source        *string            `json:"source,omitempty"`
+	Image         *string            `json:"image,omitempty"`
+	Repo          *string            `json:"repo,omitempty"`
+	Host          *string            `json:"host,omitempty"`
+	Branch        *string            `json:"branch,omitempty"`
+	BuildPack     *string            `json:"buildPack,omitempty"`
+	Memory        *string            `json:"memory,omitempty"`
+	VCPUs         *string            `json:"vcpus,omitempty"`
+	Ports         []ServicePortInput `json:"ports,omitempty"`
+	// AuthPolicy changes the auth policy of the public HTTP endpoint (public,
+	// org_sso, or deployer_sso) without resending Ports.
+	AuthPolicy              string            `json:"authPolicy,omitempty"`
+	EnvVars                 []EnvVar          `json:"envVars,omitempty"`
+	BuildCommand            *string           `json:"buildCommand,omitempty"`
+	StartCommand            *string           `json:"startCommand,omitempty"`
+	PublishDirectory        *string           `json:"publishDirectory,omitempty"`
+	RootDirectory           *string           `json:"rootDirectory,omitempty"`
+	DockerfilePath          *string           `json:"dockerfilePath,omitempty"`
+	Volumes                 []VolumeSpec      `json:"volumes,omitempty"`
+	Bucket                  *BucketMountInput `json:"bucket,omitempty"`
+	DestroyTimeoutSeconds   *int              `json:"destroyTimeoutSeconds,omitempty"`
+	TeardownEnabled         *bool             `json:"teardownEnabled,omitempty"`
+	TeardownOverlapSeconds  *int              `json:"teardownOverlapSeconds,omitempty"`
+	TeardownDrainingSeconds *int              `json:"teardownDrainingSeconds,omitempty"`
 }
 type CreateServiceResult struct {
 	ServiceID string        `json:"serviceId"`
