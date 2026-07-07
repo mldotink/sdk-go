@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	DefaultBaseURL = "https://api.ml.ink/graphql"
-	DefaultExecURL = "wss://exec-eu-central-1.ml.ink"
+	DefaultBaseURL = "https://api.deployink.com/graphql"
+	DefaultExecURL = "wss://exec-us-east-1.deployink.com"
 )
 
 type Config struct {
