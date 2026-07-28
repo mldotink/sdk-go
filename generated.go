@@ -8,6 +8,122 @@ import (
 	"github.com/Khan/genqlient/graphql"
 )
 
+type CreateSandboxExecutionInput struct {
+	// Stable retry key while the resulting Execution remains in retained history.
+	IdempotencyKey string        `json:"idempotencyKey"`
+	SandboxId      string        `json:"sandboxId"`
+	WorkspaceSlug  *string       `json:"workspaceSlug"`
+	Argv           []string      `json:"argv"`
+	Cwd            *string       `json:"cwd"`
+	Env            []EnvVarInput `json:"env"`
+	TimeoutSeconds *int          `json:"timeoutSeconds"`
+	MaxOutputBytes *int          `json:"maxOutputBytes"`
+}
+
+// GetIdempotencyKey returns CreateSandboxExecutionInput.IdempotencyKey, and is useful for accessing the field via an interface.
+func (v *CreateSandboxExecutionInput) GetIdempotencyKey() string { return v.IdempotencyKey }
+
+// GetSandboxId returns CreateSandboxExecutionInput.SandboxId, and is useful for accessing the field via an interface.
+func (v *CreateSandboxExecutionInput) GetSandboxId() string { return v.SandboxId }
+
+// GetWorkspaceSlug returns CreateSandboxExecutionInput.WorkspaceSlug, and is useful for accessing the field via an interface.
+func (v *CreateSandboxExecutionInput) GetWorkspaceSlug() *string { return v.WorkspaceSlug }
+
+// GetArgv returns CreateSandboxExecutionInput.Argv, and is useful for accessing the field via an interface.
+func (v *CreateSandboxExecutionInput) GetArgv() []string { return v.Argv }
+
+// GetCwd returns CreateSandboxExecutionInput.Cwd, and is useful for accessing the field via an interface.
+func (v *CreateSandboxExecutionInput) GetCwd() *string { return v.Cwd }
+
+// GetEnv returns CreateSandboxExecutionInput.Env, and is useful for accessing the field via an interface.
+func (v *CreateSandboxExecutionInput) GetEnv() []EnvVarInput { return v.Env }
+
+// GetTimeoutSeconds returns CreateSandboxExecutionInput.TimeoutSeconds, and is useful for accessing the field via an interface.
+func (v *CreateSandboxExecutionInput) GetTimeoutSeconds() *int { return v.TimeoutSeconds }
+
+// GetMaxOutputBytes returns CreateSandboxExecutionInput.MaxOutputBytes, and is useful for accessing the field via an interface.
+func (v *CreateSandboxExecutionInput) GetMaxOutputBytes() *int { return v.MaxOutputBytes }
+
+type CreateSandboxInput struct {
+	// Stable caller key used to make retries return the original sandbox.
+	IdempotencyKey string  `json:"idempotencyKey"`
+	WorkspaceSlug  *string `json:"workspaceSlug"`
+	// Project ID or slug. Omit to use the workspace default project.
+	Project *string `json:"project"`
+	Name    *string `json:"name"`
+	// Public Docker/OCI image reference. V1 does not accept private registry credentials.
+	Image                 string                 `json:"image"`
+	Resources             SandboxResourcesInput  `json:"resources"`
+	Env                   []EnvVarInput          `json:"env"`
+	Network               *SandboxNetworkInput   `json:"network"`
+	DestroyTimeoutSeconds *int                   `json:"destroyTimeoutSeconds"`
+	Metadata              []SandboxMetadataInput `json:"metadata"`
+}
+
+// GetIdempotencyKey returns CreateSandboxInput.IdempotencyKey, and is useful for accessing the field via an interface.
+func (v *CreateSandboxInput) GetIdempotencyKey() string { return v.IdempotencyKey }
+
+// GetWorkspaceSlug returns CreateSandboxInput.WorkspaceSlug, and is useful for accessing the field via an interface.
+func (v *CreateSandboxInput) GetWorkspaceSlug() *string { return v.WorkspaceSlug }
+
+// GetProject returns CreateSandboxInput.Project, and is useful for accessing the field via an interface.
+func (v *CreateSandboxInput) GetProject() *string { return v.Project }
+
+// GetName returns CreateSandboxInput.Name, and is useful for accessing the field via an interface.
+func (v *CreateSandboxInput) GetName() *string { return v.Name }
+
+// GetImage returns CreateSandboxInput.Image, and is useful for accessing the field via an interface.
+func (v *CreateSandboxInput) GetImage() string { return v.Image }
+
+// GetResources returns CreateSandboxInput.Resources, and is useful for accessing the field via an interface.
+func (v *CreateSandboxInput) GetResources() SandboxResourcesInput { return v.Resources }
+
+// GetEnv returns CreateSandboxInput.Env, and is useful for accessing the field via an interface.
+func (v *CreateSandboxInput) GetEnv() []EnvVarInput { return v.Env }
+
+// GetNetwork returns CreateSandboxInput.Network, and is useful for accessing the field via an interface.
+func (v *CreateSandboxInput) GetNetwork() *SandboxNetworkInput { return v.Network }
+
+// GetDestroyTimeoutSeconds returns CreateSandboxInput.DestroyTimeoutSeconds, and is useful for accessing the field via an interface.
+func (v *CreateSandboxInput) GetDestroyTimeoutSeconds() *int { return v.DestroyTimeoutSeconds }
+
+// GetMetadata returns CreateSandboxInput.Metadata, and is useful for accessing the field via an interface.
+func (v *CreateSandboxInput) GetMetadata() []SandboxMetadataInput { return v.Metadata }
+
+type CreateSandboxPortSessionInput struct {
+	IdempotencyKey   string  `json:"idempotencyKey"`
+	SandboxId        string  `json:"sandboxId"`
+	WorkspaceSlug    *string `json:"workspaceSlug"`
+	Port             int     `json:"port"`
+	ExpiresInSeconds *int    `json:"expiresInSeconds"`
+}
+
+// GetIdempotencyKey returns CreateSandboxPortSessionInput.IdempotencyKey, and is useful for accessing the field via an interface.
+func (v *CreateSandboxPortSessionInput) GetIdempotencyKey() string { return v.IdempotencyKey }
+
+// GetSandboxId returns CreateSandboxPortSessionInput.SandboxId, and is useful for accessing the field via an interface.
+func (v *CreateSandboxPortSessionInput) GetSandboxId() string { return v.SandboxId }
+
+// GetWorkspaceSlug returns CreateSandboxPortSessionInput.WorkspaceSlug, and is useful for accessing the field via an interface.
+func (v *CreateSandboxPortSessionInput) GetWorkspaceSlug() *string { return v.WorkspaceSlug }
+
+// GetPort returns CreateSandboxPortSessionInput.Port, and is useful for accessing the field via an interface.
+func (v *CreateSandboxPortSessionInput) GetPort() int { return v.Port }
+
+// GetExpiresInSeconds returns CreateSandboxPortSessionInput.ExpiresInSeconds, and is useful for accessing the field via an interface.
+func (v *CreateSandboxPortSessionInput) GetExpiresInSeconds() *int { return v.ExpiresInSeconds }
+
+type EnvVarInput struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+// GetKey returns EnvVarInput.Key, and is useful for accessing the field via an interface.
+func (v *EnvVarInput) GetKey() string { return v.Key }
+
+// GetValue returns EnvVarInput.Value, and is useful for accessing the field via an interface.
+func (v *EnvVarInput) GetValue() string { return v.Value }
+
 type MetricTimeRange string
 
 const (
@@ -27,6 +143,55 @@ var AllMetricTimeRange = []MetricTimeRange{
 	MetricTimeRangeSevenDays,
 	MetricTimeRangeThirtyDays,
 }
+
+type SandboxMetadataInput struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+// GetKey returns SandboxMetadataInput.Key, and is useful for accessing the field via an interface.
+func (v *SandboxMetadataInput) GetKey() string { return v.Key }
+
+// GetValue returns SandboxMetadataInput.Value, and is useful for accessing the field via an interface.
+func (v *SandboxMetadataInput) GetValue() string { return v.Value }
+
+type SandboxNetworkEgress string
+
+const (
+	SandboxNetworkEgressPublic    SandboxNetworkEgress = "PUBLIC"
+	SandboxNetworkEgressNone      SandboxNetworkEgress = "NONE"
+	SandboxNetworkEgressAllowlist SandboxNetworkEgress = "ALLOWLIST"
+)
+
+var AllSandboxNetworkEgress = []SandboxNetworkEgress{
+	SandboxNetworkEgressPublic,
+	SandboxNetworkEgressNone,
+	SandboxNetworkEgressAllowlist,
+}
+
+type SandboxNetworkInput struct {
+	// Omit to infer ALLOWLIST when allowDomains is set, otherwise PUBLIC.
+	Egress *SandboxNetworkEgress `json:"egress"`
+	// Exact domains or leading-wildcard domains such as api.openai.com or *.example.com.
+	AllowDomains []string `json:"allowDomains"`
+}
+
+// GetEgress returns SandboxNetworkInput.Egress, and is useful for accessing the field via an interface.
+func (v *SandboxNetworkInput) GetEgress() *SandboxNetworkEgress { return v.Egress }
+
+// GetAllowDomains returns SandboxNetworkInput.AllowDomains, and is useful for accessing the field via an interface.
+func (v *SandboxNetworkInput) GetAllowDomains() []string { return v.AllowDomains }
+
+type SandboxResourcesInput struct {
+	Vcpus    float64 `json:"vcpus"`
+	MemoryGb float64 `json:"memoryGb"`
+}
+
+// GetVcpus returns SandboxResourcesInput.Vcpus, and is useful for accessing the field via an interface.
+func (v *SandboxResourcesInput) GetVcpus() float64 { return v.Vcpus }
+
+// GetMemoryGb returns SandboxResourcesInput.MemoryGb, and is useful for accessing the field via an interface.
+func (v *SandboxResourcesInput) GetMemoryGb() float64 { return v.MemoryGb }
 
 // __acceptInviteInput is used internally by genqlient
 type __acceptInviteInput struct {
@@ -99,6 +264,42 @@ type __createRepoInput struct {
 
 // GetInput returns __createRepoInput.Input, and is useful for accessing the field via an interface.
 func (v *__createRepoInput) GetInput() CreateRepoInput { return v.Input }
+
+// __createSandboxAPIInput is used internally by genqlient
+type __createSandboxAPIInput struct {
+	Input CreateSandboxInput `json:"input"`
+}
+
+// GetInput returns __createSandboxAPIInput.Input, and is useful for accessing the field via an interface.
+func (v *__createSandboxAPIInput) GetInput() CreateSandboxInput { return v.Input }
+
+// __createSandboxExecutionAPIInput is used internally by genqlient
+type __createSandboxExecutionAPIInput struct {
+	Input CreateSandboxExecutionInput `json:"input"`
+}
+
+// GetInput returns __createSandboxExecutionAPIInput.Input, and is useful for accessing the field via an interface.
+func (v *__createSandboxExecutionAPIInput) GetInput() CreateSandboxExecutionInput { return v.Input }
+
+// __createSandboxFileAccessAPIInput is used internally by genqlient
+type __createSandboxFileAccessAPIInput struct {
+	SandboxId string  `json:"sandboxId"`
+	Workspace *string `json:"workspace"`
+}
+
+// GetSandboxId returns __createSandboxFileAccessAPIInput.SandboxId, and is useful for accessing the field via an interface.
+func (v *__createSandboxFileAccessAPIInput) GetSandboxId() string { return v.SandboxId }
+
+// GetWorkspace returns __createSandboxFileAccessAPIInput.Workspace, and is useful for accessing the field via an interface.
+func (v *__createSandboxFileAccessAPIInput) GetWorkspace() *string { return v.Workspace }
+
+// __createSandboxPortSessionAPIInput is used internally by genqlient
+type __createSandboxPortSessionAPIInput struct {
+	Input CreateSandboxPortSessionInput `json:"input"`
+}
+
+// GetInput returns __createSandboxPortSessionAPIInput.Input, and is useful for accessing the field via an interface.
+func (v *__createSandboxPortSessionAPIInput) GetInput() CreateSandboxPortSessionInput { return v.Input }
 
 // __createServiceInput is used internally by genqlient
 type __createServiceInput struct {
@@ -255,6 +456,54 @@ type __getRepoTokenInput struct {
 
 // GetInput returns __getRepoTokenInput.Input, and is useful for accessing the field via an interface.
 func (v *__getRepoTokenInput) GetInput() GetRepoTokenInput { return v.Input }
+
+// __getSandboxAPIInput is used internally by genqlient
+type __getSandboxAPIInput struct {
+	Id        string  `json:"id"`
+	Workspace *string `json:"workspace"`
+}
+
+// GetId returns __getSandboxAPIInput.Id, and is useful for accessing the field via an interface.
+func (v *__getSandboxAPIInput) GetId() string { return v.Id }
+
+// GetWorkspace returns __getSandboxAPIInput.Workspace, and is useful for accessing the field via an interface.
+func (v *__getSandboxAPIInput) GetWorkspace() *string { return v.Workspace }
+
+// __getSandboxExecutionAPIInput is used internally by genqlient
+type __getSandboxExecutionAPIInput struct {
+	SandboxId string  `json:"sandboxId"`
+	Id        string  `json:"id"`
+	Workspace *string `json:"workspace"`
+}
+
+// GetSandboxId returns __getSandboxExecutionAPIInput.SandboxId, and is useful for accessing the field via an interface.
+func (v *__getSandboxExecutionAPIInput) GetSandboxId() string { return v.SandboxId }
+
+// GetId returns __getSandboxExecutionAPIInput.Id, and is useful for accessing the field via an interface.
+func (v *__getSandboxExecutionAPIInput) GetId() string { return v.Id }
+
+// GetWorkspace returns __getSandboxExecutionAPIInput.Workspace, and is useful for accessing the field via an interface.
+func (v *__getSandboxExecutionAPIInput) GetWorkspace() *string { return v.Workspace }
+
+// __getSandboxMetricsAPIInput is used internally by genqlient
+type __getSandboxMetricsAPIInput struct {
+	Id            string          `json:"id"`
+	TimeRange     MetricTimeRange `json:"timeRange"`
+	MaxDataPoints *int            `json:"maxDataPoints"`
+	Workspace     *string         `json:"workspace"`
+}
+
+// GetId returns __getSandboxMetricsAPIInput.Id, and is useful for accessing the field via an interface.
+func (v *__getSandboxMetricsAPIInput) GetId() string { return v.Id }
+
+// GetTimeRange returns __getSandboxMetricsAPIInput.TimeRange, and is useful for accessing the field via an interface.
+func (v *__getSandboxMetricsAPIInput) GetTimeRange() MetricTimeRange { return v.TimeRange }
+
+// GetMaxDataPoints returns __getSandboxMetricsAPIInput.MaxDataPoints, and is useful for accessing the field via an interface.
+func (v *__getSandboxMetricsAPIInput) GetMaxDataPoints() *int { return v.MaxDataPoints }
+
+// GetWorkspace returns __getSandboxMetricsAPIInput.Workspace, and is useful for accessing the field via an interface.
+func (v *__getSandboxMetricsAPIInput) GetWorkspace() *string { return v.Workspace }
 
 // __getServiceByNameInput is used internally by genqlient
 type __getServiceByNameInput struct {
@@ -508,6 +757,18 @@ type __setSecretsInput struct {
 // GetInput returns __setSecretsInput.Input, and is useful for accessing the field via an interface.
 func (v *__setSecretsInput) GetInput() SetSecretsInput { return v.Input }
 
+// __terminateSandboxAPIInput is used internally by genqlient
+type __terminateSandboxAPIInput struct {
+	Id        string  `json:"id"`
+	Workspace *string `json:"workspace"`
+}
+
+// GetId returns __terminateSandboxAPIInput.Id, and is useful for accessing the field via an interface.
+func (v *__terminateSandboxAPIInput) GetId() string { return v.Id }
+
+// GetWorkspace returns __terminateSandboxAPIInput.Workspace, and is useful for accessing the field via an interface.
+func (v *__terminateSandboxAPIInput) GetWorkspace() *string { return v.Workspace }
+
 // __updateServiceInput is used internally by genqlient
 type __updateServiceInput struct {
 	Input UpdateServiceInput `json:"input"`
@@ -560,6 +821,48 @@ type createRepoResponse struct {
 
 // GetRepoCreate returns createRepoResponse.RepoCreate, and is useful for accessing the field via an interface.
 func (v *createRepoResponse) GetRepoCreate() CreateRepoResult { return v.RepoCreate }
+
+// createSandboxAPIResponse is returned by createSandboxAPI on success.
+type createSandboxAPIResponse struct {
+	// Create an ephemeral sandbox from a Docker/OCI image.
+	SandboxCreate Sandbox `json:"sandboxCreate"`
+}
+
+// GetSandboxCreate returns createSandboxAPIResponse.SandboxCreate, and is useful for accessing the field via an interface.
+func (v *createSandboxAPIResponse) GetSandboxCreate() Sandbox { return v.SandboxCreate }
+
+// createSandboxExecutionAPIResponse is returned by createSandboxExecutionAPI on success.
+type createSandboxExecutionAPIResponse struct {
+	// Start an asynchronous argv command in a running sandbox.
+	SandboxExecutionCreate SandboxExecution `json:"sandboxExecutionCreate"`
+}
+
+// GetSandboxExecutionCreate returns createSandboxExecutionAPIResponse.SandboxExecutionCreate, and is useful for accessing the field via an interface.
+func (v *createSandboxExecutionAPIResponse) GetSandboxExecutionCreate() SandboxExecution {
+	return v.SandboxExecutionCreate
+}
+
+// createSandboxFileAccessAPIResponse is returned by createSandboxFileAccessAPI on success.
+type createSandboxFileAccessAPIResponse struct {
+	// Issue a short-lived capability for the sandbox file data plane.
+	SandboxFileAccessCreate SandboxFileAccess `json:"sandboxFileAccessCreate"`
+}
+
+// GetSandboxFileAccessCreate returns createSandboxFileAccessAPIResponse.SandboxFileAccessCreate, and is useful for accessing the field via an interface.
+func (v *createSandboxFileAccessAPIResponse) GetSandboxFileAccessCreate() SandboxFileAccess {
+	return v.SandboxFileAccessCreate
+}
+
+// createSandboxPortSessionAPIResponse is returned by createSandboxPortSessionAPI on success.
+type createSandboxPortSessionAPIResponse struct {
+	// Create a short-lived authenticated session for one private sandbox port.
+	SandboxPortSessionCreate SandboxPortSession `json:"sandboxPortSessionCreate"`
+}
+
+// GetSandboxPortSessionCreate returns createSandboxPortSessionAPIResponse.SandboxPortSessionCreate, and is useful for accessing the field via an interface.
+func (v *createSandboxPortSessionAPIResponse) GetSandboxPortSessionCreate() SandboxPortSession {
+	return v.SandboxPortSessionCreate
+}
 
 // createServiceResponse is returned by createService on success.
 type createServiceResponse struct {
@@ -679,6 +982,35 @@ type getRepoTokenResponse struct {
 
 // GetRepoGetToken returns getRepoTokenResponse.RepoGetToken, and is useful for accessing the field via an interface.
 func (v *getRepoTokenResponse) GetRepoGetToken() GetRepoTokenResult { return v.RepoGetToken }
+
+// getSandboxAPIResponse is returned by getSandboxAPI on success.
+type getSandboxAPIResponse struct {
+	// Get one sandbox by ID in a workspace.
+	SandboxGet *Sandbox `json:"sandboxGet"`
+}
+
+// GetSandboxGet returns getSandboxAPIResponse.SandboxGet, and is useful for accessing the field via an interface.
+func (v *getSandboxAPIResponse) GetSandboxGet() *Sandbox { return v.SandboxGet }
+
+// getSandboxExecutionAPIResponse is returned by getSandboxExecutionAPI on success.
+type getSandboxExecutionAPIResponse struct {
+	// Get one command execution.
+	SandboxExecutionGet *SandboxExecution `json:"sandboxExecutionGet"`
+}
+
+// GetSandboxExecutionGet returns getSandboxExecutionAPIResponse.SandboxExecutionGet, and is useful for accessing the field via an interface.
+func (v *getSandboxExecutionAPIResponse) GetSandboxExecutionGet() *SandboxExecution {
+	return v.SandboxExecutionGet
+}
+
+// getSandboxMetricsAPIResponse is returned by getSandboxMetricsAPI on success.
+type getSandboxMetricsAPIResponse struct {
+	// Get retained CPU, memory, and network metrics for a sandbox.
+	SandboxMetrics SandboxMetrics `json:"sandboxMetrics"`
+}
+
+// GetSandboxMetrics returns getSandboxMetricsAPIResponse.SandboxMetrics, and is useful for accessing the field via an interface.
+func (v *getSandboxMetricsAPIResponse) GetSandboxMetrics() SandboxMetrics { return v.SandboxMetrics }
 
 // getServiceByNameResponse is returned by getServiceByName on success.
 type getServiceByNameResponse struct {
@@ -925,6 +1257,15 @@ type setSecretsResponse struct {
 // GetServiceSetSecrets returns setSecretsResponse.ServiceSetSecrets, and is useful for accessing the field via an interface.
 func (v *setSecretsResponse) GetServiceSetSecrets() SetSecretsResult { return v.ServiceSetSecrets }
 
+// terminateSandboxAPIResponse is returned by terminateSandboxAPI on success.
+type terminateSandboxAPIResponse struct {
+	// Terminate a sandbox and its active executions.
+	SandboxTerminate Sandbox `json:"sandboxTerminate"`
+}
+
+// GetSandboxTerminate returns terminateSandboxAPIResponse.SandboxTerminate, and is useful for accessing the field via an interface.
+func (v *terminateSandboxAPIResponse) GetSandboxTerminate() Sandbox { return v.SandboxTerminate }
+
 // updateServiceResponse is returned by updateService on success.
 type updateServiceResponse struct {
 	// Update service configuration and trigger a redeployment. Only specified fields change. Can also redeploy without changes to pull latest code.
@@ -1123,6 +1464,204 @@ func createRepo(
 	}
 
 	data_ = &createRepoResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by createSandboxAPI.
+const createSandboxAPI_Operation = `
+mutation createSandboxAPI ($input: CreateSandboxInput!) {
+	sandboxCreate(input: $input) {
+		... sandboxFields
+	}
+}
+fragment sandboxFields on Sandbox {
+	id
+	workspaceId
+	projectId
+	name
+	state
+	image
+	imageDigest
+	resources {
+		vcpus
+		memoryGb
+	}
+	network {
+		egress
+		allowDomains
+		inbound
+	}
+	storage {
+		root
+	}
+	capabilities
+	envKeys
+	metadata {
+		key
+		value
+	}
+	createdAt
+	readyAt
+	destroyTimeoutSeconds
+	destroyAt
+	terminatedAt
+	terminationReason
+	error {
+		code
+		message
+	}
+}
+`
+
+func createSandboxAPI(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input CreateSandboxInput,
+) (data_ *createSandboxAPIResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "createSandboxAPI",
+		Query:  createSandboxAPI_Operation,
+		Variables: &__createSandboxAPIInput{
+			Input: input,
+		},
+	}
+
+	data_ = &createSandboxAPIResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by createSandboxExecutionAPI.
+const createSandboxExecutionAPI_Operation = `
+mutation createSandboxExecutionAPI ($input: CreateSandboxExecutionInput!) {
+	sandboxExecutionCreate(input: $input) {
+		id
+		sandboxId
+		state
+		argv
+		cwd
+		envKeys
+		stdout
+		stderr
+		outputTruncated
+		outputExpired
+		exitCode
+		createdAt
+		startedAt
+		finishedAt
+		error {
+			code
+			message
+		}
+	}
+}
+`
+
+func createSandboxExecutionAPI(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input CreateSandboxExecutionInput,
+) (data_ *createSandboxExecutionAPIResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "createSandboxExecutionAPI",
+		Query:  createSandboxExecutionAPI_Operation,
+		Variables: &__createSandboxExecutionAPIInput{
+			Input: input,
+		},
+	}
+
+	data_ = &createSandboxExecutionAPIResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by createSandboxFileAccessAPI.
+const createSandboxFileAccessAPI_Operation = `
+mutation createSandboxFileAccessAPI ($sandboxId: ID!, $workspace: String) {
+	sandboxFileAccessCreate(sandboxId: $sandboxId, workspaceSlug: $workspace) {
+		baseUrl
+		token
+		expiresAt
+	}
+}
+`
+
+func createSandboxFileAccessAPI(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	sandboxId string,
+	workspace *string,
+) (data_ *createSandboxFileAccessAPIResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "createSandboxFileAccessAPI",
+		Query:  createSandboxFileAccessAPI_Operation,
+		Variables: &__createSandboxFileAccessAPIInput{
+			SandboxId: sandboxId,
+			Workspace: workspace,
+		},
+	}
+
+	data_ = &createSandboxFileAccessAPIResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by createSandboxPortSessionAPI.
+const createSandboxPortSessionAPI_Operation = `
+mutation createSandboxPortSessionAPI ($input: CreateSandboxPortSessionInput!) {
+	sandboxPortSessionCreate(input: $input) {
+		id
+		sandboxId
+		port
+		url
+		expiresAt
+	}
+}
+`
+
+func createSandboxPortSessionAPI(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input CreateSandboxPortSessionInput,
+) (data_ *createSandboxPortSessionAPIResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "createSandboxPortSessionAPI",
+		Query:  createSandboxPortSessionAPI_Operation,
+		Variables: &__createSandboxPortSessionAPIInput{
+			Input: input,
+		},
+	}
+
+	data_ = &createSandboxPortSessionAPIResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -1637,6 +2176,203 @@ func getRepoToken(
 	}
 
 	data_ = &getRepoTokenResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by getSandboxAPI.
+const getSandboxAPI_Operation = `
+query getSandboxAPI ($id: ID!, $workspace: String) {
+	sandboxGet(id: $id, workspaceSlug: $workspace) {
+		... sandboxFields
+	}
+}
+fragment sandboxFields on Sandbox {
+	id
+	workspaceId
+	projectId
+	name
+	state
+	image
+	imageDigest
+	resources {
+		vcpus
+		memoryGb
+	}
+	network {
+		egress
+		allowDomains
+		inbound
+	}
+	storage {
+		root
+	}
+	capabilities
+	envKeys
+	metadata {
+		key
+		value
+	}
+	createdAt
+	readyAt
+	destroyTimeoutSeconds
+	destroyAt
+	terminatedAt
+	terminationReason
+	error {
+		code
+		message
+	}
+}
+`
+
+func getSandboxAPI(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	id string,
+	workspace *string,
+) (data_ *getSandboxAPIResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "getSandboxAPI",
+		Query:  getSandboxAPI_Operation,
+		Variables: &__getSandboxAPIInput{
+			Id:        id,
+			Workspace: workspace,
+		},
+	}
+
+	data_ = &getSandboxAPIResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by getSandboxExecutionAPI.
+const getSandboxExecutionAPI_Operation = `
+query getSandboxExecutionAPI ($sandboxId: ID!, $id: ID!, $workspace: String) {
+	sandboxExecutionGet(sandboxId: $sandboxId, id: $id, workspaceSlug: $workspace) {
+		id
+		sandboxId
+		state
+		argv
+		cwd
+		envKeys
+		stdout
+		stderr
+		outputTruncated
+		outputExpired
+		exitCode
+		createdAt
+		startedAt
+		finishedAt
+		error {
+			code
+			message
+		}
+	}
+}
+`
+
+func getSandboxExecutionAPI(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	sandboxId string,
+	id string,
+	workspace *string,
+) (data_ *getSandboxExecutionAPIResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "getSandboxExecutionAPI",
+		Query:  getSandboxExecutionAPI_Operation,
+		Variables: &__getSandboxExecutionAPIInput{
+			SandboxId: sandboxId,
+			Id:        id,
+			Workspace: workspace,
+		},
+	}
+
+	data_ = &getSandboxExecutionAPIResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by getSandboxMetricsAPI.
+const getSandboxMetricsAPI_Operation = `
+query getSandboxMetricsAPI ($id: ID!, $timeRange: MetricTimeRange!, $maxDataPoints: Int, $workspace: String) {
+	sandboxMetrics(id: $id, timeRange: $timeRange, maxDataPoints: $maxDataPoints, workspaceSlug: $workspace) {
+		cpuUsage {
+			metric
+			dataPoints {
+				timestamp
+				value
+			}
+		}
+		memoryUsageMB {
+			metric
+			dataPoints {
+				timestamp
+				value
+			}
+		}
+		networkReceiveBytesPerSec {
+			metric
+			dataPoints {
+				timestamp
+				value
+			}
+		}
+		networkTransmitBytesPerSec {
+			metric
+			dataPoints {
+				timestamp
+				value
+			}
+		}
+		memoryLimitMB
+		cpuLimitVCPUs
+	}
+}
+`
+
+func getSandboxMetricsAPI(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	id string,
+	timeRange MetricTimeRange,
+	maxDataPoints *int,
+	workspace *string,
+) (data_ *getSandboxMetricsAPIResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "getSandboxMetricsAPI",
+		Query:  getSandboxMetricsAPI_Operation,
+		Variables: &__getSandboxMetricsAPIInput{
+			Id:            id,
+			TimeRange:     timeRange,
+			MaxDataPoints: maxDataPoints,
+			Workspace:     workspace,
+		},
+	}
+
+	data_ = &getSandboxMetricsAPIResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -2796,6 +3532,79 @@ func setSecrets(
 	}
 
 	data_ = &setSecretsResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by terminateSandboxAPI.
+const terminateSandboxAPI_Operation = `
+mutation terminateSandboxAPI ($id: ID!, $workspace: String) {
+	sandboxTerminate(id: $id, workspaceSlug: $workspace) {
+		... sandboxFields
+	}
+}
+fragment sandboxFields on Sandbox {
+	id
+	workspaceId
+	projectId
+	name
+	state
+	image
+	imageDigest
+	resources {
+		vcpus
+		memoryGb
+	}
+	network {
+		egress
+		allowDomains
+		inbound
+	}
+	storage {
+		root
+	}
+	capabilities
+	envKeys
+	metadata {
+		key
+		value
+	}
+	createdAt
+	readyAt
+	destroyTimeoutSeconds
+	destroyAt
+	terminatedAt
+	terminationReason
+	error {
+		code
+		message
+	}
+}
+`
+
+func terminateSandboxAPI(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	id string,
+	workspace *string,
+) (data_ *terminateSandboxAPIResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "terminateSandboxAPI",
+		Query:  terminateSandboxAPI_Operation,
+		Variables: &__terminateSandboxAPIInput{
+			Id:        id,
+			Workspace: workspace,
+		},
+	}
+
+	data_ = &terminateSandboxAPIResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

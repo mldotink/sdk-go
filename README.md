@@ -78,6 +78,35 @@ result, err := client.Exec(ctx, ink.ExecInput{ServiceID: serviceID}, "ls -la /ap
 fmt.Printf("exit %d\n%s", result.ExitCode, result.Stdout)
 ```
 
+### Run an isolated sandbox
+
+`Image` is a normal Docker/OCI image reference. `CreateSandbox` waits until the
+sandbox is ready, and `Run` waits for the command result.
+
+```go
+sandbox, err := client.CreateSandbox(ctx, ink.SandboxCreateOptions{
+    Image:        "python:3.12",
+    VCPUs:        2,
+    MemoryGB:     4,
+    AllowDomains: []string{"api.openai.com"},
+    Env:          map[string]string{"OPENAI_API_KEY": os.Getenv("OPENAI_API_KEY")},
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer sandbox.Terminate(context.Background())
+
+result, err := sandbox.Run(ctx, []string{"python", "/workspace/main.py"}, ink.SandboxRunOptions{
+    TimeoutSeconds: 120,
+})
+fmt.Print(result.Stdout)
+```
+
+Idempotency keys, lifecycle polling, short-lived file capabilities, and private
+port sessions are handled by the SDK. Explicit idempotency keys remain
+available in the option structs for retrying an operation across process
+restarts.
+
 ### Interactive shell session
 
 ```go
@@ -202,6 +231,19 @@ fmt.Printf("Current bill: $%.2f\n", float64(breakdown.CurrentBillCents)/100)
 |--------|-------------|
 | `GetLogs(ctx, LogsInput)` | Fetch service log entries |
 | `GetMetrics(ctx, serviceID, timeRange, maxDataPoints)` | CPU/memory/network metrics |
+
+### Sandboxes
+
+| Method | Description |
+|--------|-------------|
+| `CreateSandbox(ctx, SandboxCreateOptions)` | Create an OCI-image sandbox and wait until ready |
+| `GetSandbox(ctx, id, workspaceSlug)` | Attach to an existing sandbox |
+| `sandbox.Run(ctx, argv, SandboxRunOptions)` | Run argv and wait for the retained result |
+| `sandbox.RunCommand(ctx, command, SandboxRunOptions)` | Run a shell command |
+| `sandbox.ReadFile`, `WriteFile`, `ListFiles`, `StatFile`, `DeleteFile` | Access sandbox files |
+| `sandbox.OpenPort(ctx, port, SandboxPortOptions)` | Open a short-lived private port URL |
+| `sandbox.Metrics(ctx, timeRange, maxDataPoints)` | Read retained CPU, memory, and network metrics |
+| `sandbox.Terminate(ctx)` | Terminate the sandbox and wait for cleanup |
 
 ### Repos
 | Method | Description |

@@ -81,6 +81,26 @@ bindings:
     type: github.com/mldotink/sdk-go.MetricSeries
   MetricDataPoint:
     type: github.com/mldotink/sdk-go.MetricDataPoint
+  Sandbox:
+    type: github.com/mldotink/sdk-go.Sandbox
+  SandboxResources:
+    type: github.com/mldotink/sdk-go.SandboxResources
+  SandboxNetwork:
+    type: github.com/mldotink/sdk-go.SandboxNetwork
+  SandboxStorage:
+    type: github.com/mldotink/sdk-go.SandboxStorage
+  SandboxError:
+    type: github.com/mldotink/sdk-go.SandboxError
+  SandboxMetadata:
+    type: github.com/mldotink/sdk-go.SandboxMetadata
+  SandboxExecution:
+    type: github.com/mldotink/sdk-go.SandboxExecution
+  SandboxFileAccess:
+    type: github.com/mldotink/sdk-go.SandboxFileAccess
+  SandboxPortSession:
+    type: github.com/mldotink/sdk-go.SandboxPortSession
+  SandboxMetrics:
+    type: github.com/mldotink/sdk-go.SandboxMetrics
   VolumeInfo:
     type: github.com/mldotink/sdk-go.VolumeInfo
   ChatReadResult:

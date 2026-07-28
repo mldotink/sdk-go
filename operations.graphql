@@ -82,6 +82,80 @@ mutation deleteVolume($name: String!, $project: String, $ws: String) {
   volumeDelete(name: $name, projectSlug: $project, workspaceSlug: $ws)
 }
 
+# ── Sandboxes ─────────────────────────────────────────────────────────────────
+
+fragment sandboxFields on Sandbox {
+  id workspaceId projectId name state image imageDigest
+  resources { vcpus memoryGb }
+  network { egress allowDomains inbound }
+  storage { root }
+  capabilities envKeys
+  metadata { key value }
+  createdAt readyAt destroyTimeoutSeconds destroyAt terminatedAt
+  terminationReason
+  error { code message }
+}
+
+mutation createSandboxAPI($input: CreateSandboxInput!) {
+  sandboxCreate(input: $input) { ...sandboxFields }
+}
+
+query getSandboxAPI($id: ID!, $workspace: String) {
+  sandboxGet(id: $id, workspaceSlug: $workspace) { ...sandboxFields }
+}
+
+mutation terminateSandboxAPI($id: ID!, $workspace: String) {
+  sandboxTerminate(id: $id, workspaceSlug: $workspace) { ...sandboxFields }
+}
+
+mutation createSandboxExecutionAPI($input: CreateSandboxExecutionInput!) {
+  sandboxExecutionCreate(input: $input) {
+    id sandboxId state argv cwd envKeys stdout stderr outputTruncated outputExpired
+    exitCode createdAt startedAt finishedAt
+    error { code message }
+  }
+}
+
+query getSandboxExecutionAPI($sandboxId: ID!, $id: ID!, $workspace: String) {
+  sandboxExecutionGet(sandboxId: $sandboxId, id: $id, workspaceSlug: $workspace) {
+    id sandboxId state argv cwd envKeys stdout stderr outputTruncated outputExpired
+    exitCode createdAt startedAt finishedAt
+    error { code message }
+  }
+}
+
+mutation createSandboxFileAccessAPI($sandboxId: ID!, $workspace: String) {
+  sandboxFileAccessCreate(sandboxId: $sandboxId, workspaceSlug: $workspace) {
+    baseUrl token expiresAt
+  }
+}
+
+mutation createSandboxPortSessionAPI($input: CreateSandboxPortSessionInput!) {
+  sandboxPortSessionCreate(input: $input) {
+    id sandboxId port url expiresAt
+  }
+}
+
+query getSandboxMetricsAPI(
+  $id: ID!
+  $timeRange: MetricTimeRange!
+  $maxDataPoints: Int
+  $workspace: String
+) {
+  sandboxMetrics(
+    id: $id
+    timeRange: $timeRange
+    maxDataPoints: $maxDataPoints
+    workspaceSlug: $workspace
+  ) {
+    cpuUsage { metric dataPoints { timestamp value } }
+    memoryUsageMB { metric dataPoints { timestamp value } }
+    networkReceiveBytesPerSec { metric dataPoints { timestamp value } }
+    networkTransmitBytesPerSec { metric dataPoints { timestamp value } }
+    memoryLimitMB cpuLimitVCPUs
+  }
+}
+
 # ── Secrets ───────────────────────────────────────────────────────────────────
 
 mutation setSecrets($input: SetSecretsInput!) {

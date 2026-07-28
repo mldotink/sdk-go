@@ -19,8 +19,9 @@ type Config struct {
 	HTTPClient *http.Client
 }
 type Client struct {
-	gql     graphql.Client
-	execURL string
+	gql             graphql.Client
+	execURL         string
+	dataPlaneClient *http.Client
 }
 
 func NewClient(cfg Config) *Client {
@@ -39,13 +40,16 @@ func NewClient(cfg Config) *Client {
 	if httpClient == nil {
 		httpClient = &http.Client{}
 	}
-	httpClient.Transport = &authTransport{
+	dataPlaneClient := *httpClient
+	apiHTTPClient := *httpClient
+	apiHTTPClient.Transport = &authTransport{
 		apiKey: cfg.APIKey,
 		base:   transportOrDefault(httpClient.Transport),
 	}
 	return &Client{
-		gql:     graphql.NewClient(baseURL, httpClient),
-		execURL: execURL,
+		gql:             graphql.NewClient(baseURL, &apiHTTPClient),
+		execURL:         execURL,
+		dataPlaneClient: &dataPlaneClient,
 	}
 }
 func (c *Client) ExecBaseURL() string { return c.execURL }
@@ -56,8 +60,10 @@ type authTransport struct {
 }
 
 func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	req.Header.Set("Authorization", "Bearer "+t.apiKey)
-	return t.base.RoundTrip(req)
+	authorized := req.Clone(req.Context())
+	authorized.Header = req.Header.Clone()
+	authorized.Header.Set("Authorization", "Bearer "+t.apiKey)
+	return t.base.RoundTrip(authorized)
 }
 
 func transportOrDefault(t http.RoundTripper) http.RoundTripper {
