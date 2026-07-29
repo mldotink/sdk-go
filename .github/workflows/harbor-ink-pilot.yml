@@ -42,8 +42,8 @@ jobs:
           cp -R tasks/2026-07-29-v1/proto-area-bulk-geometry /tmp/ink-pilot-task
           sed -i '/^\[agent\]$/,/^\[/s/^timeout_sec = 21600.0$/timeout_sec = 3300.0/' /tmp/ink-pilot-task/task.toml
           sed -i '/^\[verifier\]$/a environment_mode = "separate"' /tmp/ink-pilot-task/task.toml
-          sed -i '/^\[environment\]$/i [verifier.environment]\ndocker_image = "ttl.sh/ink-harbor-proto-area-20260729@sha256:f0aa09657d97de7dae1e3fc9e77d92703d9931c6d64dd7a909445fab99b43bbe"\nnetwork_mode = "no-network"\nos = "linux"\ncpus = 3\nmemory_mb = 2048\nstorage_mb = 8192\n' /tmp/ink-pilot-task/task.toml
-          sed -i '/^\[environment\]$/a docker_image = "ttl.sh/ink-harbor-proto-area-20260729@sha256:f0aa09657d97de7dae1e3fc9e77d92703d9931c6d64dd7a909445fab99b43bbe"' /tmp/ink-pilot-task/task.toml
+          sed -i '/^\[environment\]$/i [verifier.environment]\ndocker_image = "ttl.sh/ink-harbor-proto-area-20260729-v2@sha256:40c2f353db411c6e91abfc6bca6cee84b450202ce9b5bde9878001f772228630"\nnetwork_mode = "no-network"\nos = "linux"\ncpus = 3\nmemory_mb = 2048\nstorage_mb = 8192\n' /tmp/ink-pilot-task/task.toml
+          sed -i '/^\[environment\]$/a docker_image = "ttl.sh/ink-harbor-proto-area-20260729-v2@sha256:40c2f353db411c6e91abfc6bca6cee84b450202ce9b5bde9878001f772228630"' /tmp/ink-pilot-task/task.toml
           sed -i '/^\[environment\]$/,/^\[\[/s/^network_mode = "no-network"$/network_mode = "allowlist"\nallowed_hosts = ["api.openai.com", "chatgpt.com", "ab.chatgpt.com", "auth.openai.com", "api.anthropic.com", "generativelanguage.googleapis.com", "openrouter.ai", "x.ai", "cli-chat-proxy.grok.com", "auth.x.ai", "accounts.x.ai", "api.x.ai"]/' /tmp/ink-pilot-task/task.toml
           jq -n '{
             job_name: "physicslab-ink-proto-area-pilot",
