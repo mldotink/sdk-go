@@ -1,0 +1,79 @@
+name: Harbor Ink pilot
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  proto-area-bulk-geometry:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      INK_API_KEY: ${{ secrets.INK_API_KEY }}
+      INK_API_URL: ${{ secrets.INK_API_URL }}
+      INK_WORKSPACE: ${{ secrets.INK_WORKSPACE || 'e2e' }}
+      INK_PROJECT: ${{ secrets.INK_PROJECT || 'default' }}
+      OPENAI_API_KEY: ${{ secrets.HARBOR_OPENAI_API_KEY }}
+
+    steps:
+      - name: Check configuration
+        run: |
+          test -n "$INK_API_KEY"
+          test -n "$OPENAI_API_KEY"
+
+      - name: Checkout Physicslab
+        uses: actions/checkout@v4
+        with:
+          repository: gluonfield/physics-env-v2
+          ref: main
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          python-version: "3.14"
+
+      - name: Prepare isolated pilot
+        working-directory: harbor
+        run: |
+          cp -R tasks/2026-07-29-v1/proto-area-bulk-geometry /tmp/ink-pilot-task
+          sed -i '/^\[agent\]$/,/^\[/s/^timeout_sec = 21600.0$/timeout_sec = 3300.0/' /tmp/ink-pilot-task/task.toml
+          sed -i '/^\[verifier\]$/a environment_mode = "separate"' /tmp/ink-pilot-task/task.toml
+          sed -i '/^\[environment\]$/a docker_image = "ghcr.io/gluonfield/physicslab-runtime@sha256:d871e79db6c861cb703892763d6cad1377dfc01bb6c7ba1a7020d8ee60e5dd6d"' /tmp/ink-pilot-task/task.toml
+          jq -n '{
+            job_name: "physicslab-ink-proto-area-pilot",
+            n_attempts: 1,
+            n_concurrent_trials: 1,
+            retry: {max_retries: 0},
+            environment: {
+              import_path: "physicslab.ink_environment:InkEnvironment",
+              kwargs: {destroy_timeout_seconds: 7200}
+            },
+            verifier: {disable: true},
+            agents: [{
+              name: "codex",
+              model_name: "gpt-5.6-sol",
+              n_concurrent: 1,
+              kwargs: {
+                version: "0.145.0",
+                reasoning_effort: "xhigh",
+                web_search: "disabled"
+              }
+            }],
+            tasks: [{path: "/tmp/ink-pilot-task", source: "2026-07-29-v1"}]
+          }' >/tmp/ink-pilot.json
+
+      - name: Run one problem on Ink
+        working-directory: harbor
+        run: uv run harbor run --config /tmp/ink-pilot.json --yes --debug
+
+      - name: Upload result and metrics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: physicslab-ink-proto-area-pilot
+          path: harbor/jobs/physicslab-ink-proto-area-pilot
+          if-no-files-found: warn
+          retention-days: 14
