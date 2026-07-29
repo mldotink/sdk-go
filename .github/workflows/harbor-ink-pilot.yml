@@ -42,7 +42,9 @@ jobs:
           cp -R tasks/2026-07-29-v1/proto-area-bulk-geometry /tmp/ink-pilot-task
           sed -i '/^\[agent\]$/,/^\[/s/^timeout_sec = 21600.0$/timeout_sec = 3300.0/' /tmp/ink-pilot-task/task.toml
           sed -i '/^\[verifier\]$/a environment_mode = "separate"' /tmp/ink-pilot-task/task.toml
+          sed -i '/^\[environment\]$/i [verifier.environment]\ndocker_image = "ghcr.io/gluonfield/physicslab-runtime@sha256:d871e79db6c861cb703892763d6cad1377dfc01bb6c7ba1a7020d8ee60e5dd6d"\nnetwork_mode = "no-network"\nos = "linux"\ncpus = 3\nmemory_mb = 2048\nstorage_mb = 8192\n' /tmp/ink-pilot-task/task.toml
           sed -i '/^\[environment\]$/a docker_image = "ghcr.io/gluonfield/physicslab-runtime@sha256:d871e79db6c861cb703892763d6cad1377dfc01bb6c7ba1a7020d8ee60e5dd6d"' /tmp/ink-pilot-task/task.toml
+          sed -i '/^\[environment\]$/,/^\[\[/s/^network_mode = "no-network"$/network_mode = "allowlist"\nallowed_hosts = ["api.openai.com", "chatgpt.com", "ab.chatgpt.com", "auth.openai.com", "api.anthropic.com", "generativelanguage.googleapis.com", "openrouter.ai", "x.ai", "cli-chat-proxy.grok.com", "auth.x.ai", "accounts.x.ai", "api.x.ai"]/' /tmp/ink-pilot-task/task.toml
           jq -n '{
             job_name: "physicslab-ink-proto-area-pilot",
             n_attempts: 1,
