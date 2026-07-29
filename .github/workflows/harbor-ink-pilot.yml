@@ -70,7 +70,27 @@ jobs:
 
       - name: Run one problem on Ink
         working-directory: harbor
-        run: uv run harbor run --config /tmp/ink-pilot.json --yes --debug
+        run: |
+          uv run python - <<'PY'
+          import os
+
+          from ink import Ink, NotFoundError, SandboxState
+
+          client = Ink()
+          try:
+              sandbox = client.sandboxes.get(
+                  "sbx_FH27HiT3QetqE8jQbnyq9U",
+                  workspace=os.environ["INK_WORKSPACE"],
+              )
+              print(f"Cleaning previous pilot sandbox {sandbox.id} ({sandbox.state.value})")
+              if sandbox.state not in {SandboxState.FAILED, SandboxState.TERMINATED}:
+                  sandbox.terminate(wait=False)
+          except NotFoundError:
+              pass
+          finally:
+              client.close()
+          PY
+          uv run harbor run --config /tmp/ink-pilot.json --yes --debug
 
       - name: Upload result and metrics
         if: always()
